@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Job Portal - MPC Architecture</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .job-form input, .job-form textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      box-sizing: border-box;
+    }
+
+    .job-form button {
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .job-form button:hover {
+      background: #0056b3;
+    }
+
+    .job-listing {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 5px;
+      background: #fafafa;
+    }
+
+    .job-listing h3 {
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Job Portal</h1>
+
+    <div class="job-form">
+      <input type="text" id="jobTitle" placeholder="Job Title" />
+      <textarea id="jobDescription" placeholder="Job Description"></textarea>
+      <button onclick="controller.addJob()">Add Job</button>
+    </div>
+
+    <h2>Available Jobs</h2>
+    <div id="jobList"></div>
+  </div>
+
+  <script>
+    // Model
+    const model = {
+      jobs: [],
+
+      addJob(title, description) {
+        if (title && description) {
+          this.jobs.push({ title, description });
+        }
+      },
+
+      getJobs() {
+        return this.jobs;
+      }
+    };
+
+    // Presenter
+    const presenter = {
+      renderJobs() {
+        const jobList = document.getElementById('jobList');
+        jobList.innerHTML = '';
+
+        const jobs = model.getJobs();
+        if (jobs.length === 0) {
+          jobList.innerHTML = '<p>No jobs posted yet.</p>';
+          return;
+        }
+
+        jobs.forEach(job => {
+          const jobDiv = document.createElement('div');
+          jobDiv.className = 'job-listing';
+
+          jobDiv.innerHTML = `
+            <h3>${job.title}</h3>
+            <p>${job.description}</p>
+          `;
+
+          jobList.appendChild(jobDiv);
+        });
+      }
+    };
+
+    // Controller
+    const controller = {
+      addJob() {
+        const title = document.getElementById('jobTitle').value.trim();
+        const description = document.getElementById('jobDescription').value.trim();
+
+        if (title && description) {
+          model.addJob(title, description);
+          presenter.renderJobs();
+
+          document.getElementById('jobTitle').value = '';
+          document.getElementById('jobDescription').value = '';
+        } else {
+          alert('Please enter both title and description.');
+        }
+      }
+    };
+
+    // Initial render
+    presenter.renderJobs();
+  </script>
+</body>
+</html>
